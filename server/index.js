@@ -58,10 +58,11 @@ app.get("/device/:id", async (req, res) => {
 app.put("/device/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { description } = req.body;
-    const updateDevice = await pool.query(
-      "UPDATE device SET description = $1 WHERE id = $2",
-      [description, id]
+    const {model, country, device, oem, count_ebay, price_ebay, price_store, count_store, link, image} = req.body;
+    const updateDevice = await pool.query("UPDATE device  SET model=$1, country=$2, device=$3, oem=$4, count_ebay=$5, price_ebay=$6, price_store=$7, count_store=$8, link=$9, image=$10   WHERE id=$2",
+          [model, country, device, oem, count_ebay, price_ebay, price_store, count_store, link, image, id]
+      // "UPDATE device SET description = $1 WHERE id = $2",
+      // [description, id]
     );
 
     res.json("Device was updated!");
@@ -72,13 +73,13 @@ app.put("/device/:id", async (req, res) => {
 
 //delete a device
 
-app.delete("/todos/:id", async (req, res) => {
+app.delete("/device/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const deleteTodo = await pool.query("DELETE FROM todo WHERE todo_id = $1", [
+    const deleteDevice = await pool.query("DELETE FROM device WHERE id = $1", [
       id
     ]);
-    res.json("Todo was deleted!");
+    res.json("Device was deleted!");
   } catch (err) {
     console.log(err.message);
   }
