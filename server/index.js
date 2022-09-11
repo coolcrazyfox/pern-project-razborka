@@ -9,66 +9,68 @@ app.use(express.json()); //req.body
 
 //ROUTES//
 
-//create a todo
+//create a todo_ "/todos"
 
-app.post("/todos", async (req, res) => {
+app.post("/device", async (req, res) => {
   try {
-    const { description } = req.body;
-    const newTodo = await pool.query(
-      "INSERT INTO todo (description) VALUES($1) RETURNING *",
-      [description]
-    );
+    // const { description } = req.body;
+    const {model, country, device, oem, count_ebay, price_ebay, price_store, count_store, link, image} = req.body
+    // const newTodo = await pool.query(
+    //   "INSERT INTO todo (description) VALUES($1) RETURNING *",
+    //   [description]
+    // );
+    const newDevice = await pool.query('INSERT INTO device (model, country, device, oem, count_ebay, price_ebay, price_store, count_store, link, image) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', [model, country, device, oem, count_ebay, price_ebay, price_store, count_store, link, image])
 
-    res.json(newTodo.rows[0]);
+    res.json(newDevice.rows[0]);
   } catch (err) {
     console.error(err.message);
   }
 });
 
-//get all todos
+//get all devices
 
-app.get("/todos", async (req, res) => {
+app.get("/device", async (req, res) => {
   try {
-    const allTodos = await pool.query("SELECT * FROM todo");
-    res.json(allTodos.rows);
+    const allDevice = await pool.query("SELECT * FROM device");
+    res.json(allDevice.rows);
   } catch (err) {
     console.error(err.message);
   }
 });
 
-//get a todo
+//get a device
 
-app.get("/todos/:id", async (req, res) => {
+app.get("/device/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [
+    const dev = await pool.query("SELECT * FROM device WHERE id = $1", [
       id
     ]);
 
-    res.json(todo.rows[0]);
+    res.json(dev.rows[0]);
   } catch (err) {
     console.error(err.message);
   }
 });
 
-//update a todo
+//update a device
 
-app.put("/todos/:id", async (req, res) => {
+app.put("/device/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { description } = req.body;
-    const updateTodo = await pool.query(
-      "UPDATE todo SET description = $1 WHERE todo_id = $2",
+    const updateDevice = await pool.query(
+      "UPDATE device SET description = $1 WHERE id = $2",
       [description, id]
     );
 
-    res.json("Todo was updated!");
+    res.json("Device was updated!");
   } catch (err) {
     console.error(err.message);
   }
 });
 
-//delete a todo
+//delete a device
 
 app.delete("/todos/:id", async (req, res) => {
   try {
